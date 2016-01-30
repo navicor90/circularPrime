@@ -31,18 +31,15 @@ def es_circular(i):
             return False
 
 
-    # Si es primo, evaluamos si es circular, sino no es circular
-    if es_primo(i):
-        rotado = str(i)
-        for j in range(0, len(str(i))):
-            rotado = rotar(rotado)
-            # Si alguna rotacion no es prima , no es circular
-            if not es_primo(int(rotado)):
-                return False
+    rotado = str(i)
+    for j in range(0, len(str(i))):
+        # Si alguna rotacion no es prima , no es circular
+        if not es_primo(int(rotado)):
+            return False
 
-        return True;
-    else:
-        return False
+        rotado = rotar(rotado)
+
+    return True;
 
 
 
