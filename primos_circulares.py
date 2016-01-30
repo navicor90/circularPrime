@@ -25,11 +25,16 @@ class calcular_primos(threading.Thread):
         threading.Thread.__init__(self)
         self.base = base
         self.top = top
+        self.limite = sqrt(top)
 
     def run(self):
         for i in range(self.base,self.top):
             if es_primo(i):
                 primos.append(i)
+                # Si se alcnazó la raiz cuadrada del numero maximo a evaluar,
+                # no se siguen calculando primos
+                if i > self.limite:
+                    return
 
 
 import time
@@ -39,14 +44,13 @@ def buscar_primos(top):
     startTime = time.time()
     threads = []
 
-    thread2 = evaluar_circulares(1, top)
-    thread2.start()
-    threads.append(thread2)
-
     thread1 = calcular_primos(2, top)
     thread1.start()
     threads.append(thread1)
 
+    thread2 = evaluar_circulares(1, top)
+    thread2.start()
+    threads.append(thread2)
 
     for thread in threads:
             thread.join()
