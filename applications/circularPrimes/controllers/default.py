@@ -9,7 +9,7 @@
 #########################################################################
 
 def index():
-    datos = dict('Calcular primos circulares desde 0 hasta':'1000000')
+    datos = {'Hasta':'1000000'}
     form = SQLFORM.dictform(datos)
 
     response.flash = T("Bienvenido")
