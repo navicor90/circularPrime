@@ -1,16 +1,28 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import threading
 circulares = []
 primos = []
 class evaluar_circulares(threading.Thread):
-    def __init__ (self, base, top):
+
+    def __init__ (self, top):
         threading.Thread.__init__(self)
-        self.base = base
+        self.base = 3
         self.top = top
 
     def run(self):
-        for i in range(self.base,self.top):
+        # Estos valores se añaden explicitamente para poder iterar con paso 2
+        # cuando estemos buscando los circulares y así hacerlo con mayor
+        # eficiencia
+        if self.top > 1:
+            circulares.append(1)
+            circulares.append(2)
+        else:
+            circulares.append(1)
+            return
+
+        for i in range(self.base,self.top,2):
             # Si no tenemos suficientes primos para factorizar un numero, se pone a
             # dormir el hilo
             while( (len(primos) < 2) or (primos[len(primos)-1] < sqrt(i))):
@@ -21,9 +33,9 @@ class evaluar_circulares(threading.Thread):
                 circulares.append(i)
 
 class calcular_primos(threading.Thread):
-    def __init__ (self, base, top):
+    def __init__ (self, top):
         threading.Thread.__init__(self)
-        self.base = base
+        self.base = 2
         self.top = top
         self.limite = sqrt(top)
 
@@ -44,11 +56,11 @@ def buscar_primos(top):
     startTime = time.time()
     threads = []
 
-    thread1 = calcular_primos(2, top)
+    thread1 = calcular_primos(top)
     thread1.start()
     threads.append(thread1)
 
-    thread2 = evaluar_circulares(1, top)
+    thread2 = evaluar_circulares(top)
     thread2.start()
     threads.append(thread2)
 
@@ -102,4 +114,4 @@ def es_circular(i):
     return True;
 
 
-buscar_primos(1000000)
+buscar_primos(100000000)
