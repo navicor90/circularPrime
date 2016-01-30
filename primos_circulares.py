@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import threading
-
+circulares = []
 class evaluar_primos(threading.Thread):
     def __init__ (self, base, top):
         threading.Thread.__init__(self)
@@ -11,35 +11,41 @@ class evaluar_primos(threading.Thread):
     def run(self):
         for i in range(self.base,self.top):
             if es_circular(i):
-                print "%i Es primo circular!!" %(i)
+                circulares.append(i)
+                print i
 
 import time
+BLOCK_SIZE = 100000
 def buscar_primos(top):
-    threads = []
 
     startTime = time.time()
-    thread1 = evaluar_primos(1,top/2)
-    thread1.start()
-    threads.append(thread1)
+    for i in range(1,top/BLOCK_SIZE,2):
+        threads = []
+        base = (i-1) * BLOCK_SIZE
+        top1 = i * (BLOCK_SIZE)
+        top2 = (i+1) * BLOCK_SIZE
+        print "base: "+ str(base) + " top1:"+ str(top1)
+        print "top1: "+ str(top1) + " top2:"+ str(top2)
+        thread1 = evaluar_primos(base, top1)
+        thread1.start()
+        threads.append(thread1)
 
-    thread2 = evaluar_primos(top/2,top*0.75)
-    thread2.start()
-    threads.append(thread2)
+        thread2 = evaluar_primos(top1, top2)
+        thread2.start()
+        threads.append(thread2)
 
-    thread3 = evaluar_primos(top*0.75,top)
-    thread3.start()
-    threads.append(thread3)
+        for thread in threads:
+                thread.join()
 
-    for thread in threads:
-            thread.join()
     endTime = time.time()
     print('el calculo se tardo:'+str(endTime-startTime))
+    print('total encontrados:'+ str(len(circulares)))
     
     
 
 def es_primo(i):
     # Si se divide por 2 o un numero menor a si mismo, es primo
-    for divisor in range(2,i-1):
+    for divisor in range(3,i/2):
         if( i % divisor == 0):
             return False;
     return True
@@ -58,16 +64,17 @@ def es_circular(i):
         if int(j) not in [1,3,7,9]:
             return False
 
-
+    # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
+    # se evaluo esa combinacion
     rotado = str(i)
     for j in range(0, len(str(i))):
         # Si alguna rotacion no es prima , no es circular
-        alguno_no_es_primo = False
         if not es_primo(int(rotado)):
             return False
-
+        else:
+            if rotado in circulares:
+                return True
         rotado = rotar(rotado)
-        threading.currentThread()
 
     return True;
 
