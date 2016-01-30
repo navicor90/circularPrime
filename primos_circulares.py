@@ -2,52 +2,67 @@
 
 import threading
 circulares = []
-class evaluar_primos(threading.Thread):
+primos = []
+class evaluar_circulares(threading.Thread):
     def __init__ (self, base, top):
         threading.Thread.__init__(self)
         self.base = base
         self.top = top
 
     def run(self):
+        print 'inicio circ'
         for i in range(self.base,self.top):
             if es_circular(i):
                 circulares.append(i)
                 print i
 
+class calcular_primos(threading.Thread):
+    def __init__ (self, base, top):
+        threading.Thread.__init__(self)
+        self.base = base
+        self.top = top
+
+    def run(self):
+        print 'inicio primos'
+        for i in range(self.base,self.top):
+            if es_primo(i):
+                primos.append(i)
+
+
 import time
-BLOCK_SIZE = 100000
+from math import sqrt
 def buscar_primos(top):
 
     startTime = time.time()
-    for i in range(1,top/BLOCK_SIZE,2):
-        threads = []
-        base = (i-1) * BLOCK_SIZE
-        top1 = i * (BLOCK_SIZE)
-        top2 = (i+1) * BLOCK_SIZE
-        print "base: "+ str(base) + " top1:"+ str(top1)
-        print "top1: "+ str(top1) + " top2:"+ str(top2)
-        thread1 = evaluar_primos(base, top1)
-        thread1.start()
-        threads.append(thread1)
+    threads = []
+    thread1 = calcular_primos(2, top)
+    thread1.start()
+    threads.append(thread1)
 
-        thread2 = evaluar_primos(top1, top2)
-        thread2.start()
-        threads.append(thread2)
+    thread2 = evaluar_circulares(1, top)
+    thread2.start()
+    threads.append(thread2)
 
-        for thread in threads:
-                thread.join()
+    for thread in threads:
+            thread.join()
 
     endTime = time.time()
     print('el calculo se tardo:'+str(endTime-startTime))
     print('total encontrados:'+ str(len(circulares)))
     
     
-
 def es_primo(i):
+    if (len(primos) > 2) and (primos[len(primos)-1] < sqrt(i)):
+            time.sleep(1)
+            #sleep
+
     # Si se divide por 2 o un numero menor a si mismo, es primo
-    for divisor in range(3,i/2):
+    for divisor in primos:
         if( i % divisor == 0):
             return False;
+        else:
+            if(divisor > sqrt(i)):
+                return True
     return True
 
 def rotar(cadena):
@@ -71,9 +86,6 @@ def es_circular(i):
         # Si alguna rotacion no es prima , no es circular
         if not es_primo(int(rotado)):
             return False
-        else:
-            if rotado in circulares:
-                return True
         rotado = rotar(rotado)
 
     return True;
