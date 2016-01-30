@@ -1,62 +1,61 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 
-# C extensions
-*.so
+# Compiled source #
+###################
+*.pyc
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
+# Web2py packed applications #
+##############################
+*.w2p
+!welcome.w2p # required to create new applications from welcome
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Web2py Logs & Parameters #
+############################
+httpserver.log
+httpserver.pid
+parameters_*.py
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# Web2py Sessions #
+###################
+applications/*/sessions/
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*,cover
-.hypothesis/
+# Web2py Databases #
+####################
+applications/*/databases/
 
-# Translations
-*.mo
-*.pot
+# Web2py Cache #
+################
+applications/*/cache/
 
-# Django stuff:
-*.log
+# Web2py Uploads #
+################
+applications/*/uploads/
 
-# Sphinx documentation
-docs/_build/
+# Web2py language files #
+#########################
+applications/*/languages/*
+!applications/pnp/languages/default.py
+!applications/pnp/languages/es.py
 
-# PyBuilder
-target/
+# Sublime Text files #
+######################
+*.sublime-*
 
-#Ipython Notebook
-.ipynb_checkpoints
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+applications/pnp/errors/*
+
+# VIm
+.*.swp
+
+# Some editors' backup Files
+*~ 
+*.bak
+.pythonhistory
+applications/*/progress.log
