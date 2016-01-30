@@ -2,12 +2,40 @@
 
 import threading
 
+class evaluar_primos(threading.Thread):
+    def __init__ (self, base, top):
+        threading.Thread.__init__(self)
+        self.base = base
+        self.top = top
 
-def evaluar_primos():
-    for i in range(1,2000):
-        # mostramos si es circular
-        if es_circular(i):
-            print "%i Es primo circular!!" %(i)
+    def run(self):
+        for i in range(self.base,self.top):
+            if es_circular(i):
+                print "%i Es primo circular!!" %(i)
+
+import time
+def buscar_primos(top):
+    threads = []
+
+    startTime = time.time()
+    thread1 = evaluar_primos(1,top/2)
+    thread1.start()
+    threads.append(thread1)
+
+    thread2 = evaluar_primos(top/2,top*0.75)
+    thread2.start()
+    threads.append(thread2)
+
+    thread3 = evaluar_primos(top*0.75,top)
+    thread3.start()
+    threads.append(thread3)
+
+    for thread in threads:
+            thread.join()
+    endTime = time.time()
+    print('el calculo se tardo:'+str(endTime-startTime))
+    
+    
 
 def es_primo(i):
     # Si se divide por 2 o un numero menor a si mismo, es primo
@@ -34,14 +62,14 @@ def es_circular(i):
     rotado = str(i)
     for j in range(0, len(str(i))):
         # Si alguna rotacion no es prima , no es circular
+        alguno_no_es_primo = False
         if not es_primo(int(rotado)):
             return False
 
         rotado = rotar(rotado)
+        threading.currentThread()
 
     return True;
 
 
-
-
-evaluar_primos()
+buscar_primos(1000000)
