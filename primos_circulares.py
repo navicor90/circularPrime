@@ -10,11 +10,15 @@ class evaluar_circulares(threading.Thread):
         self.top = top
 
     def run(self):
-        print 'inicio circ'
         for i in range(self.base,self.top):
+            # Si no tenemos suficientes primos para factorizar un numero, se pone a
+            # dormir el hilo
+            while( (len(primos) < 2) or (primos[len(primos)-1] < sqrt(i))):
+                time.sleep(2)
+                #sleep
+
             if es_circular(i):
                 circulares.append(i)
-                print i
 
 class calcular_primos(threading.Thread):
     def __init__ (self, base, top):
@@ -23,7 +27,6 @@ class calcular_primos(threading.Thread):
         self.top = top
 
     def run(self):
-        print 'inicio primos'
         for i in range(self.base,self.top):
             if es_primo(i):
                 primos.append(i)
@@ -35,13 +38,15 @@ def buscar_primos(top):
 
     startTime = time.time()
     threads = []
-    thread1 = calcular_primos(2, top)
-    thread1.start()
-    threads.append(thread1)
 
     thread2 = evaluar_circulares(1, top)
     thread2.start()
     threads.append(thread2)
+
+    thread1 = calcular_primos(2, top)
+    thread1.start()
+    threads.append(thread1)
+
 
     for thread in threads:
             thread.join()
@@ -49,23 +54,25 @@ def buscar_primos(top):
     endTime = time.time()
     print('el calculo se tardo:'+str(endTime-startTime))
     print('total encontrados:'+ str(len(circulares)))
+    print circulares
     
     
 def es_primo(i):
-    if (len(primos) > 2) and (primos[len(primos)-1] < sqrt(i)):
-            time.sleep(1)
-            #sleep
-
-    # Si se divide por 2 o un numero menor a si mismo, es primo
     for divisor in primos:
+        # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
+        # por ese divisor
         if( i % divisor == 0):
             return False;
         else:
-            if(divisor > sqrt(i)):
+            # Los multiplos de un numero compuesto deben ser menor a la raiz
+            # cuadrada del numero a evaluar( No hay casos donde sean mayor)
+            if(divisor >= sqrt(i)):
                 return True
     return True
 
 def rotar(cadena):
+    """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
+    la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
     cadena_rotada = ''
     for i in range(0,len(cadena)):
         cadena_rotada += cadena[(i+1) % len(cadena)]
