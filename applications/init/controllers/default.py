@@ -18,8 +18,12 @@ def index():
         startTime = time.time()
         pc = primos_circulares.buscarPrimosCirculares(int(hasta))
         endTime = time.time()
-        msg = '%s números encontrados en %s segundos.' %(len(pc), endTime - startTime)
-        response.flash = 'Consulta ejecutada'
+        if pc:
+            msg = '%s números encontrados en %s segundos.' %(len(pc), endTime - startTime)
+            response.flash = 'Consulta ejecutada'
+        else:
+            response.flash = 'Ocurrió un problema'
+
     elif form.errors:
         response.flash = 'Formulario erroneo'
 
