@@ -14,19 +14,18 @@ class evaluar_circulares(threading.Thread):
         # Estos valores se añaden explicitamente para poder iterar con paso 2
         # cuando estemos buscando los circulares y así hacerlo con mayor
         # eficiencia
-        if self.top > 1:
+        if self.top >= 2:
             circulares.append(1)
             circulares.append(2)
         else:
             circulares.append(1)
             return
 
-        for i in range(self.base,self.top,2):
+        for i in range(self.base,self.top+1,2):
             # Si no tenemos suficientes primos para factorizar un numero, se pone a
             # dormir el hilo
-            while( (len(primos) < 2) or (primos[len(primos)-1] < sqrt(i))):
+            while((primos[len(primos)-1] < sqrt(i))):
                 time.sleep(2)
-                #sleep
 
             if es_circular(i):
                 circulares.append(i)
@@ -52,22 +51,24 @@ import time
 from math import sqrt
 def buscarPrimosCirculares(top):
     global circulares
-    global primos
     circulares = []
+    global primos
     primos = []
 
-    threads = []
+    if int(top) > 0:
 
-    thread1 = calcular_primos(top)
-    thread1.start()
-    threads.append(thread1)
+        threads = []
 
-    thread2 = evaluar_circulares(top)
-    thread2.start()
-    threads.append(thread2)
+        thread1 = calcular_primos(top)
+        thread1.start()
+        threads.append(thread1)
 
-    for thread in threads:
-            thread.join()
+        thread2 = evaluar_circulares(top)
+        thread2.start()
+        threads.append(thread2)
+
+        for thread in threads:
+                thread.join()
 
     return circulares
     
