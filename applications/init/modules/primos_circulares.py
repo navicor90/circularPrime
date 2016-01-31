@@ -5,7 +5,6 @@ import threading
 circulares = []
 primos = []
 class evaluar_circulares(threading.Thread):
-
     def __init__ (self, top):
         threading.Thread.__init__(self)
         self.base = 3
@@ -51,9 +50,12 @@ class calcular_primos(threading.Thread):
 
 import time
 from math import sqrt
-def buscar_primos(top):
+def buscarPrimosCirculares(top):
+    global circulares
+    global primos
+    circulares = []
+    primos = []
 
-    startTime = time.time()
     threads = []
 
     thread1 = calcular_primos(top)
@@ -67,10 +69,7 @@ def buscar_primos(top):
     for thread in threads:
             thread.join()
 
-    endTime = time.time()
-    print('el calculo se tardo:'+str(endTime-startTime))
-    print('total encontrados:'+ str(len(circulares)))
-    print circulares
+    return circulares
     
     
 def es_primo(i):
@@ -113,5 +112,3 @@ def es_circular(i):
 
     return True;
 
-
-buscar_primos(100000000)

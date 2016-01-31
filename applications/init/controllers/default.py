@@ -1,19 +1,29 @@
 # -*- coding: utf-8 -*-
-# this file is released under public domain and you can use without limitations
 
-#########################################################################
-## This is a sample controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-#########################################################################
+from gluon.custom_import import track_changes; track_changes(True)
+import primos_circulares
+import time
 
 def index():
-    datos = {'Hasta':'1000000'}
-    form = SQLFORM.dictform(datos)
+    response.flash = STRONG('Contrátame  ',I(_class='glyphicon glyphicon-thumbs-up'))
+    pc = []
+    msg = ''
+    form = SQLFORM.factory(
+            Field('hasta','integer' ,requires=IS_NOT_EMPTY(),default=1000000),
+            _class='form-inline'
+            )
 
-    response.flash = T("Bienvenido")
-    return dict(form = form)
+    if form.process().accepted:
+        hasta = form.vars.hasta
+        startTime = time.time()
+        pc = primos_circulares.buscarPrimosCirculares(int(hasta))
+        endTime = time.time()
+        msg = '%s números encontrados en %s segundos.' %(len(pc), endTime - startTime)
+        response.flash = 'Consulta ejecutada'
+    elif form.errors:
+        response.flash = 'Formulario erroneo'
+
+    return dict(form = form,pc = pc,msg= msg)
 
 
 def user():
