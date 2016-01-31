@@ -1,6 +1,6 @@
 CircularPrime WEB
 ================
-La aplicación WEB de calculo de números primos circulares se encuentra
+La aplicación WEB de cálculo de números primos circulares se encuentra
 desplegada en
 [http://circularprimes.herokuapp.com](http://circularprimes.herokuapp.com)
 
@@ -16,4 +16,4 @@ El mismo se puede **ejecutar** como:
 `python2.7 applications/init/modules/primos_circulares.py NUMERO_MAXIMO`
 
 **NUMERO_MAXIMO** es un entero positivo, que representa el rango superior del
-intervalo en el que se buscarán los números primos circula
+intervalo en el que se buscarán los números primos circulares.
