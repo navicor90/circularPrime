@@ -18,7 +18,6 @@ class evaluar_circulares(threading.Thread):
             circulares.append(1)
             circulares.append(2)
         else:
-            circulares.append(1)
             return
 
         for i in range(self.base,self.top+1,2):
