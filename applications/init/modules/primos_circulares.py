@@ -26,6 +26,7 @@ class evaluar_circulares(threading.Thread):
             while((primos[len(primos)-1] < sqrt(i))):
                 time.sleep(2)
 
+
             if es_circular(i):
                 circulares.append(i)
 
@@ -80,7 +81,7 @@ def buscarPrimosCirculares(top):
     
     
 def es_primo(i):
-    """ Evalua si es primo. """
+    """ Evalua si es primo a través de un test de primalidad """
     for divisor in primos:
         # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
         # por ese divisor
@@ -111,12 +112,12 @@ def es_circular(i):
 
     # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
     # se evaluo esa combinacion
-    rotado = str(i)
+    rotado = i
     for j in range(0, len(str(i))):
         # Si alguna rotacion no es prima , no es circular
-        if not es_primo(int(rotado)):
+        if not es_primo(rotado):
             return False
-        rotado = rotar(rotado)
+        rotado = int(rotar( str(rotado) ))
 
     return True;
 
