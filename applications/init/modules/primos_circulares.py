@@ -2,33 +2,32 @@
 # -*- coding: utf-8 -*-
 
 import threading
-circulares = []
-primos = []
+PRIMOS =  [2]
 class evaluar_circulares(threading.Thread):
-    def __init__ (self, top):
+    def __init__ (self,circulares , top):
         threading.Thread.__init__(self)
         self.base = 3
         self.top = top
+        self.circulares = circulares
 
     def run(self):
         # Estos valores se añaden explicitamente para poder iterar con paso 2
         # cuando estemos buscando los circulares y así hacerlo con mayor
         # eficiencia
         if self.top >= 2:
-            circulares.append(1)
-            circulares.append(2)
+            self.circulares.append(1)
+            self.circulares.append(2)
         else:
             return
 
         for i in range(self.base,self.top+1,2):
             # Si no tenemos suficientes primos para factorizar un numero, se pone a
             # dormir el hilo
-            while((primos[len(primos)-1] < sqrt(i))):
+            while((PRIMOS[len(PRIMOS)-1] < sqrt(i))):
                 time.sleep(2)
 
-
             if es_circular(i):
-                circulares.append(i)
+                self.circulares.append(i)
 
 class calcular_primos(threading.Thread):
     def __init__ (self, top):
@@ -40,7 +39,7 @@ class calcular_primos(threading.Thread):
     def run(self):
         for i in range(self.base,self.top):
             if es_primo(i):
-                primos.append(i)
+                PRIMOS.append(i)
                 # Si se alcnazó la raiz cuadrada del numero maximo a evaluar,
                 # no se siguen calculando primos
                 if i > self.limite:
@@ -52,11 +51,7 @@ from math import sqrt
 def buscarPrimosCirculares(top):
     """ Busca todos los numeros primos circulares mayores a 0 y menores que el
     parametro "top" """
-    # Obtenemos las variables globales
-    global circulares
     circulares = []
-    global primos
-    primos = []
 
     # Validamos que el valor ingresado, sea entero y positivo
     if int(top) > 0:
@@ -70,7 +65,7 @@ def buscarPrimosCirculares(top):
         threads.append(thread1)
 
         # Creamos hilo para calcular los circulares
-        thread2 = evaluar_circulares(top)
+        thread2 = evaluar_circulares(circulares,top)
         thread2.start()
         threads.append(thread2)
 
@@ -79,10 +74,12 @@ def buscarPrimosCirculares(top):
 
     return circulares
     
-    
 def es_primo(i):
     """ Evalua si es primo a través de un test de primalidad """
-    for divisor in primos:
+    if sqrt(i) > PRIMOS[len(PRIMOS)-1]:
+        es_primo(i-1)
+
+    for divisor in PRIMOS:
         # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
         # por ese divisor
         if( i % divisor == 0):
@@ -92,6 +89,8 @@ def es_primo(i):
             # cuadrada del numero a evaluar( No hay casos donde sean mayor)
             if(divisor >= sqrt(i)):
                 return True
+
+    PRIMOS.append(i)
     return True
 
 def rotar(cadena):
