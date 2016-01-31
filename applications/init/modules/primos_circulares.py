@@ -50,19 +50,26 @@ class calcular_primos(threading.Thread):
 import time
 from math import sqrt
 def buscarPrimosCirculares(top):
+    """ Busca todos los numeros primos circulares mayores a 0 y menores que el
+    parametro "top" """
+    # Obtenemos las variables globales
     global circulares
     circulares = []
     global primos
     primos = []
 
+    # Validamos que el valor ingresado, sea entero y positivo
     if int(top) > 0:
 
         threads = []
 
+        # Creamos hilo para calcular todos los numeros primos a utilizar para
+        # descomponer otros numeros a evaluar
         thread1 = calcular_primos(top)
         thread1.start()
         threads.append(thread1)
 
+        # Creamos hilo para calcular los circulares
         thread2 = evaluar_circulares(top)
         thread2.start()
         threads.append(thread2)
@@ -74,6 +81,7 @@ def buscarPrimosCirculares(top):
     
     
 def es_primo(i):
+    """ Evalua si es primo. """
     for divisor in primos:
         # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
         # por ese divisor
@@ -113,13 +121,18 @@ def es_circular(i):
 
     return True;
 
+
 import time
 import sys
+# Acceso por linea de comandos
 if __name__ == '__main__':
+
+    # Si hay mas de 1 parametros, salimos
     if len(sys.argv) > 2:
         print "Error: Se debe pasar un solo parametro. Ej: primos_circulares.py 100"
         exit()
 
+    # Comprobamos si el valor ingresado es correcto
     try:
         numero_max = int(sys.argv[1])
         if numero_max < 0 :
@@ -128,6 +141,7 @@ if __name__ == '__main__':
         print "Error: Se debe ingresar un entero positivo. Ej: primos_circulares.py 100"
         exit()
 
+    # Buscamos los primos circulares y calculamos el tiempo
     print 'Calculando... \n'
     startTime = time.time()
     cp = buscarPrimosCirculares(numero_max)
