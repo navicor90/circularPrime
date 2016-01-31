@@ -1,33 +1,27 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-{{block header}}
-    <header class="container-fluid background">
-      <div class="jumbotron text-center">
-        {{if response.title:}}
-        <h1>Primos Circulares
-        </h1>
-        {{pass}}
-      </div>
-    </header>
-{{end}}
+<div class="page-header">
+    <h1>Números primos circulares</h1>
+</div>
 
+<h4>Indique el número máximo a evaluar.</h4>
 {{=form}}
 
-{{block right_sidebar}}
-<div class="panel panel-info">
-  <div class="panel-heading"><h3 class="panel-title"><a class="btn-block"
-      href="{{=URL('admin','default','index')}}">
-      <i class="glyphicon glyphicon-info-sign"></i>
-      {{=T("Info")}}
-    </a></h3></div>
-  <div class="panel-body">
-    {{=T("Don't know what to do?")}}
-  </div>
-  <ul class="list-group">
-    <li class="list-group-item">{{=A(T("Online examples"), _href=URL('examples','default','index'))}}</li>
-    <li class="list-group-item"><a href="http://web2py.com">web2py.com</a></li>
-    <li class="list-group-item"><a href="http://web2py.com/book">{{=T('Documentation')}}</a></li>
-  </ul>
+</br>
+{{if pc:}}
+<div class="panel panel-default">
+    <div class="panel-body">
+    <h3>
+      <p>
+        <b>Primos Circulares obtenidos:</b>
+        {{=pc}}
+      </p>
+      <small>
+        {{=msg}}
+      </small>
+    </h3>
+    </div>
 </div>
-{{end}}
+{{pass}}
+
