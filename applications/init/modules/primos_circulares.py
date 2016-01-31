@@ -112,3 +112,24 @@ def es_circular(i):
 
     return True;
 
+import time
+import sys
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        print "Error: Se debe pasar un solo parametro. Ej: primos_circulares.py 100"
+        exit()
+
+    try:
+        numero_max = int(sys.argv[1])
+        if numero_max < 0 :
+            raise Exception()
+    except:
+        print "Error: Se debe ingresar un entero positivo. Ej: primos_circulares.py 100"
+        exit()
+
+    print 'Calculando... \n'
+    startTime = time.time()
+    cp = buscarPrimosCirculares(numero_max)
+    endTime = time.time()
+    print cp
+    print ('\n Se encontraron %s primos circulares en %s segundos.' % (len(cp),str(endTime-startTime)))
