@@ -5,7 +5,7 @@ import primos_circulares
 import time
 
 def index():
-    response.flash = STRONG('Contrátame  ',I(_class='glyphicon glyphicon-thumbs-up'))
+    response.flash = STRONG('Bienvenido  ',I(_class='glyphicon glyphicon-thumbs-up'))
     pc = []
     msg = ''
     form = SQLFORM.factory(
