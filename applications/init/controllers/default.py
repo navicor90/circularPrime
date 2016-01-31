@@ -5,7 +5,7 @@ import primos_circulares
 import time
 
 def index():
-    response.flash = STRONG('Contrátame  ',I(_class='glyphicon glyphicon-thumbs-up'))
+    response.flash = STRONG('Bienvenido  ',I(_class='glyphicon glyphicon-thumbs-up'))
     pc = []
     msg = ''
     form = SQLFORM.factory(
@@ -18,9 +18,9 @@ def index():
         startTime = time.time()
         pc = primos_circulares.buscarPrimosCirculares(int(hasta))
         endTime = time.time()
+        response.flash = ''
         if pc:
             msg = '%s números encontrados en %s segundos.' %(len(pc), endTime - startTime)
-            response.flash = 'Consulta ejecutada'
         else:
             response.flash = 'Ocurrió un problema'
 
