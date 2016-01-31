@@ -19,7 +19,6 @@ class EvaluarCirculares(threading.Thread):
         # cuando estemos buscando los circulares y así hacerlo con mayor
         # eficiencia
         if self.top >= 2:
-            self.circulares.append(1)
             self.circulares.append(2)
         else:
             return
