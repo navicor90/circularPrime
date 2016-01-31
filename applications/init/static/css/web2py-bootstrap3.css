@@ -25,7 +25,7 @@ div.w2p_flash.alert:hover {
     filter: alpha(opacity=25);
 }
 .main-container {
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 div.error {
@@ -108,7 +108,7 @@ select.autocomplete {
     background: url(../images/background.jpg) no-repeat center center;
 }
 body {
-    padding-top: 50px;
+    padding-top: 0px;
     margin-bottom: 60px;
 }
 header {
