@@ -13,6 +13,7 @@
 httpserver.log
 httpserver.pid
 parameters_*.py
+logs/
 
 # Web2py Sessions #
 ###################
