@@ -5,6 +5,7 @@ import threading
 import time
 import sys
 from math import sqrt
+
 class PrimosCirculares(object):
     PRIMOS =  [2]
 
@@ -68,7 +69,7 @@ class PrimosCirculares(object):
             else:
                 return
 
-            for i in range(self.base,self.top+1,2):
+            for i in range(self.base, self.top+1, 2):
                 # Si no tenemos suficientes primos para factorizar un numero, se pone a
                 # dormir el hilo
                 while((self.outer.PRIMOS[len(self.outer.PRIMOS)-1] < sqrt(i))):
