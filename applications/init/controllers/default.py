@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from gluon.custom_import import track_changes; track_changes(True)
-import primos_circulares
+from primos_circulares import PrimosCirculares
 import time
 
 def index():
     response.flash = STRONG('Bienvenido  ',I(_class='glyphicon glyphicon-thumbs-up'))
-    pc = []
+    pcList = []
     msg = ''
     form = SQLFORM.factory(
             Field('hasta','integer' ,requires=IS_NOT_EMPTY(),default=1000000),
@@ -14,20 +14,21 @@ def index():
             )
 
     if form.process().accepted:
-        hasta = form.vars.hasta
+        numero_max = form.vars.hasta
+        pc = PrimosCirculares()
         startTime = time.time()
-        pc = primos_circulares.buscarPrimosCirculares(int(hasta))
+        pcList = pc.buscar(int(numero_max))
         endTime = time.time()
         response.flash = ''
         if pc:
-            msg = '%s números encontrados en %s segundos.' %(len(pc), endTime - startTime)
+            msg = '%s números encontrados en %s segundos.' %(len(pcList), endTime - startTime)
         else:
             response.flash = 'Ocurrió un problema'
 
     elif form.errors:
         response.flash = 'Formulario erroneo'
 
-    return dict(form = form,pc = pc,msg= msg)
+    return dict(form = form,pc = pcList,msg= msg)
 
 
 def user():
