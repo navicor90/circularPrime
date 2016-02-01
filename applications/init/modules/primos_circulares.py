@@ -1,128 +1,134 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import threading
+from threading import Thread
 import time
 import sys
 from math import sqrt
 
 class PrimosCirculares(object):
-    PRIMOS =  [2]
+    __circulares = []
 
-    def esPrimo(self, i):
-        """ Evalua si es primo a través de un test de primalidad """
-        for divisor in self.PRIMOS:
-            # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
-            # por ese divisor
-            if( i % divisor == 0):
-                return False;
-            else:
-                # Los multiplos de un numero compuesto deben ser menor a la raiz
-                # cuadrada del numero a evaluar( No hay casos donde sean mayor)
-                if(divisor >= sqrt(i)):
-                    return True
+    @classmethod
+    def rotar(self, cadena):
+        """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
+        la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
+        cadena_rotada = ''
+        for i in range(0,len(cadena)):
+            cadena_rotada += cadena[(i+1) % len(cadena)]
+        return cadena_rotada
 
-        self.PRIMOS.append(i)
-        return True
+    @classmethod
+    def esCircular(self, i):
+        """ Evalua si es primo circular """
+        # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
+        # entonces ya no es circular
+        for j in str(i):
+            if int(j) not in [1,3,7,9]:
+                return False
 
-    class EvaluarCirculares(threading.Thread):
-        def __init__ (self,outer, circulares , top):
-            threading.Thread.__init__(self)
-            self.outer = outer
-            self.base = 3
-            self.top = top
-            self.circulares = circulares
+        # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
+        # se evaluo esa combinacion
+        rotado = i
+        for j in range(0, len(str(i))):
+            # Si alguna rotacion no es prima , no es circular
+            if not Primos.esPrimo(rotado):
+                return False
+            rotado = int(self.rotar( str(rotado) ))
 
-        def __rotar(self, cadena):
-            """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
-            la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
-            cadena_rotada = ''
-            for i in range(0,len(cadena)):
-                cadena_rotada += cadena[(i+1) % len(cadena)]
-            return cadena_rotada
+        return True;
 
-        def __esCircular(self, i):
-            """ Evalua si es primo circular """
-            # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
-            # entonces ya no es circular
-            for j in str(i):
-                if int(j) not in [1,3,7,9]:
-                    return False
+    def __obtenerCirculares(self,base=1 ,top=10):
+        # Estos valores se añaden explicitamente para poder iterar con paso 2
+        # cuando estemos buscando los circulares y así hacerlo con mayor
+        # eficiencia
+        if base <= 0 or top <= 1:
+            raise Exception('Parametros erroneos, debe ser base > 0 y tope > 1')
 
-            # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
-            # se evaluo esa combinacion
-            rotado = i
-            for j in range(0, len(str(i))):
-                # Si alguna rotacion no es prima , no es circular
-                if not self.outer.esPrimo(rotado):
-                    return False
-                rotado = int(self.__rotar( str(rotado) ))
+        if base < 3:
+            self.__circulares.append(2)
+            base = 3
 
-            return True;
+        if base % 2 == 0:
+            base += 1
 
-        def run(self):
-            # Estos valores se añaden explicitamente para poder iterar con paso 2
-            # cuando estemos buscando los circulares y así hacerlo con mayor
-            # eficiencia
-            if self.top >= 2:
-                self.circulares.append(2)
-            else:
-                return
+        # Le sumamos 1 a top, para evaluar también el numero ingresado por parametros
+        for i in range(base, top+1, 2):
+            # Si no tenemos suficientes primos para factorizar un numero, se pone a
+            # dormir el hilo
+            while((Primos.getPrimosCalculados()[len(Primos.getPrimosCalculados())-1] < sqrt(i))):
+                time.sleep(2)
 
-            for i in range(self.base, self.top+1, 2):
-                # Si no tenemos suficientes primos para factorizar un numero, se pone a
-                # dormir el hilo
-                while((self.outer.PRIMOS[len(self.outer.PRIMOS)-1] < sqrt(i))):
-                    time.sleep(2)
-
-                if self.__esCircular(i):
-                    self.circulares.append(i)
-
-
-    class CalcularPrimos(threading.Thread):
-        def __init__ (self,outer, top):
-            threading.Thread.__init__(self)
-            self.outer = outer
-            self.base = 2
-            self.top = top
-            self.limite = sqrt(top)
-
-        def run(self):
-            for i in range(self.base,self.top):
-                if self.outer.esPrimo(i):
-                    self.outer.PRIMOS.append(i)
-                    # Si se alcnazó la raiz cuadrada del numero maximo a evaluar,
-                    # no se siguen calculando primos
-                    if i > self.limite:
-                        return
-
+            if self.esCircular(i):
+                self.__circulares.append(i)
 
     def buscar(self, top):
         """ Busca todos los numeros primos circulares mayores a 0 y menores que el
         parametro "top" """
-        circulares = []
 
+        self.__circulares = []
         # Validamos que el valor ingresado, sea entero y positivo
         if int(top) > 0:
-
-            threads = []
-
-            # Creamos hilo para calcular todos los numeros primos a utilizar para
-            # descomponer otros numeros a evaluar
-            thread1 = self.CalcularPrimos(self, top)
-            thread1.start()
-            threads.append(thread1)
+            p = Primos(top)
 
             # Creamos hilo para calcular los circulares
-            thread2 = self.EvaluarCirculares(self, circulares, top)
-            thread2.start()
-            threads.append(thread2)
+            thread = Thread(target=self.__obtenerCirculares, args=(1,top,))
+            thread.start()
+            thread.join()
 
-            for thread in threads:
-                    thread.join()
+            pass
 
-        return circulares
+        return self.__circulares
     
+class Primos(object):
+    PRIMOS = [2]
+    calculador = Thread()
+
+    def __init__ (self, top=2):
+        self.top = top
+        self.calculador = Thread(target=self.__preCalcular, args=(self.top,))
+        self.calculador.start()
+
+    @classmethod
+    def esPrimo(self,n):
+        """ Utilizando la lista "primos" evalua si un numero dado "i" es primo """
+        if(self.PRIMOS[len(self.PRIMOS) -1] < sqrt(n)):
+            if self.calculador.is_alive():
+                self.calculador.join()
+            else:
+                self.top = n
+                self.calculador = Thread(target=self.__preCalcular, args=(self.top,))
+                self.calculador.start()
+                self.calculador.join()
+                return self.esPrimo(n)
+                #wakeup
+
+        for divisor in self.PRIMOS:
+            # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
+            # por ese divisor
+            if( n % divisor == 0):
+                return False;
+            # Los multiplos de un numero compuesto deben ser menor a la raiz
+            # cuadrada del numero a evaluar( No hay casos donde sean mayor)
+            if(divisor >= sqrt(n)):
+                return True
+
+        raise Exception()
+
+
+    def __preCalcular(self, top):
+        for i in range(self.PRIMOS[len(self.PRIMOS)-1], int(top)):
+            if self.esPrimo(i):
+                self.PRIMOS.append(i)
+
+    @classmethod
+    def getPrimosCalculados(self):
+        """
+        if self.calculador.is_alive():
+            self.calculador.join()
+        """
+        return self.PRIMOS
+
 
 # Acceso por linea de comandos
 if __name__ == '__main__':
