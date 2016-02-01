@@ -1,33 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import threading
+from threading import Thread
 import time
 import sys
 from math import sqrt
 
 class PrimosCirculares(object):
-    PRIMOS =  [2]
 
-    def esPrimo(self, i):
-        """ Evalua si es primo a través de un test de primalidad """
-        if(self.PRIMOS[len(self.PRIMOS)-1] < sqrt(i)):
-            raise Exception()
-            #PROBLEMAAAAAAAAA CUANDO HAY UN UN CIRCULAR, EL CUAL SU ROTADO ES MAYOR QUE EL EVALUADO
-
-        for divisor in self.PRIMOS:
-            # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
-            # por ese divisor
-            if( i % divisor == 0):
-                return False;
-            else:
-                # Los multiplos de un numero compuesto deben ser menor a la raiz
-                # cuadrada del numero a evaluar( No hay casos donde sean mayor)
-                if(divisor >= sqrt(i)):
-                    return True
-        return True
-
-    class EvaluarCirculares(threading.Thread):
+    class EvaluarCirculares(Thread):
         def __init__ (self,outer, circulares , top):
             threading.Thread.__init__(self)
             self.outer = outer
@@ -80,33 +61,18 @@ class PrimosCirculares(object):
                 if self.__esCircular(i):
                     self.circulares.append(i)
 
-
-    class CalcularPrimos(threading.Thread):
-        def __init__ (self,outer, top):
-            threading.Thread.__init__(self)
-            self.outer = outer
-            self.base = 2
-            self.top = top
-            self.limite = sqrt(top)
-
-        def run(self):
-            for i in range(self.base,self.top):
-                if self.outer.esPrimo(i):
-                    self.outer.PRIMOS.append(i)
-                    # Si se alcnazó la raiz cuadrada del numero maximo a evaluar,
-                    # no se siguen calculando primos
-                    if i > self.limite:
-                        return
-
-
     def buscar(self, top):
         """ Busca todos los numeros primos circulares mayores a 0 y menores que el
         parametro "top" """
         circulares = []
 
+        p = Primos(1000)
+        print p.esPrimo(top)
+
         # Validamos que el valor ingresado, sea entero y positivo
         if int(top) > 0:
 
+            """
             threads = []
 
             # Creamos hilo para calcular todos los numeros primos a utilizar para
@@ -122,9 +88,53 @@ class PrimosCirculares(object):
 
             for thread in threads:
                 thread.join()
+            """
+            pass
 
         return circulares
     
+class Primos(object):
+    def __init__ (self, top=2, primos=[2]):
+        self.top = top
+        self.primos = primos
+        self.calculador = Thread(target=self.preCalcular, args=(self.top,))
+        self.calculador.start()
+
+    def esPrimo(self,n):
+        """ Utilizando la lista "primos" evalua si un numero dado "i" es primo """
+        if(self.primos[len(self.primos) -1] < sqrt(n)):
+            if self.calculador.is_alive():
+                print 'Esperar a que termine'
+                self.calculador.join()
+            else:
+                print 'Es hora de despertar'
+                self.top = n
+                self.calculador = Thread(target=self.preCalcular, args=(self.top,))
+                self.calculador.start()
+                self.calculador.join()
+                return self.esPrimo(n)
+                #wakeup
+
+        for divisor in self.primos:
+            # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
+            # por ese divisor
+            if( n % divisor == 0):
+                return False;
+            # Los multiplos de un numero compuesto deben ser menor a la raiz
+            # cuadrada del numero a evaluar( No hay casos donde sean mayor)
+            if(divisor >= sqrt(n)):
+                return True
+
+        raise Exception()
+
+
+    def preCalcular(self, top):
+        for i in range(self.primos[len(self.primos)-1], int(top)):
+            if self.esPrimo(i):
+                self.primos.append(i)
+                # Si se alcnazó la raiz cuadrada del numero maximo a evaluar,
+                # no se siguen calculando primos
+
 
 # Acceso por linea de comandos
 if __name__ == '__main__':
