@@ -39,6 +39,8 @@ class PrimosCirculares(object):
         return True;
 
     def __obtenerCirculares(self,base=1 ,top=10):
+        """ Función privada que permite evaluar los numeros circulares en un 
+        intervalo dado, utilizado para multihilamiento"""
         # Estos valores se añaden explicitamente para poder iterar con paso 2
         # cuando estemos buscando los circulares y así hacerlo con mayor
         # eficiencia
@@ -67,21 +69,31 @@ class PrimosCirculares(object):
         parametro "top" """
 
         self.__circulares = []
+        threads = []
         # Validamos que el valor ingresado, sea entero y positivo
         if int(top) > 0:
             p = Primos(top)
 
+            top1 = int(0.6*top)
             # Creamos hilo para calcular los circulares
-            thread = Thread(target=self.__obtenerCirculares, args=(1,top,))
-            thread.start()
-            thread.join()
+            thread1 = Thread(target=self.__obtenerCirculares, args=(1,top1,))
+            thread1.start()
+            threads.append(thread1)
+
+            # Creamos hilo para calcular los circulares
+            thread2 = Thread(target=self.__obtenerCirculares, args=(top1,top,))
+            thread2.start()
+            threads.append(thread2)
+
+            for t in threads:
+                t.join()
 
             pass
 
         return self.__circulares
     
 class Primos(object):
-    PRIMOS = [2]
+    PRIMOS = [2,3]
     calculador = Thread()
 
     def __init__ (self, top=2):
@@ -117,16 +129,15 @@ class Primos(object):
 
 
     def __preCalcular(self, top):
-        for i in range(self.PRIMOS[len(self.PRIMOS)-1], int(top)):
+        """ Recorre en paso 2 (para evaluar numeros impares) desde el ultimo primo 
+        calculado hasta el valor de "top" calculando primos y guardandolos"""
+        for i in range(self.PRIMOS[len(self.PRIMOS)-1], int(top), 2):
             if self.esPrimo(i):
                 self.PRIMOS.append(i)
 
     @classmethod
     def getPrimosCalculados(self):
-        """
-        if self.calculador.is_alive():
-            self.calculador.join()
-        """
+        """ Devuelve la lista de los primos calculada hasta el momento """
         return self.PRIMOS
 
 
