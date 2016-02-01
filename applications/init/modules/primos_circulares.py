@@ -7,12 +7,57 @@ import sys
 from math import sqrt
 
 PRIMOS =  [2]
+
+def rotar(cadena):
+    """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
+    la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
+    cadena_rotada = ''
+    for i in range(0,len(cadena)):
+        cadena_rotada += cadena[(i+1) % len(cadena)]
+    return cadena_rotada
+
+
+def esPrimo(i):
+    """ Evalua si es primo a través de un test de primalidad """
+    for divisor in PRIMOS:
+        # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
+        # por ese divisor
+        if( i % divisor == 0):
+            return False;
+        else:
+            # Los multiplos de un numero compuesto deben ser menor a la raiz
+            # cuadrada del numero a evaluar( No hay casos donde sean mayor)
+            if(divisor >= sqrt(i)):
+                return True
+
+    PRIMOS.append(i)
+    return True
+
 class EvaluarCirculares(threading.Thread):
-    def __init__ (self,circulares , top):
+    def __init__ (self, circulares , top):
         threading.Thread.__init__(self)
         self.base = 3
         self.top = top
         self.circulares = circulares
+
+    def __esCircular(self, i):
+        """ Evalua si es primo circular """
+        # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
+        # entonces ya no es circular
+        for j in str(i):
+            if int(j) not in [1,3,7,9]:
+                return False
+
+        # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
+        # se evaluo esa combinacion
+        rotado = i
+        for j in range(0, len(str(i))):
+            # Si alguna rotacion no es prima , no es circular
+            if not esPrimo(rotado):
+                return False
+            rotado = int(rotar( str(rotado) ))
+
+        return True;
 
     def run(self):
         # Estos valores se añaden explicitamente para poder iterar con paso 2
@@ -29,8 +74,9 @@ class EvaluarCirculares(threading.Thread):
             while((PRIMOS[len(PRIMOS)-1] < sqrt(i))):
                 time.sleep(2)
 
-            if esCircular(i):
+            if self.__esCircular(i):
                 self.circulares.append(i)
+
 
 class CalcularPrimos(threading.Thread):
     def __init__ (self, top):
@@ -75,52 +121,6 @@ def buscarPrimosCirculares(top):
 
     return circulares
     
-def esPrimo(i):
-    """ Evalua si es primo a través de un test de primalidad """
-    if sqrt(i) > PRIMOS[len(PRIMOS)-1]:
-        esPrimo(i-1)
-
-    for divisor in PRIMOS:
-        # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
-        # por ese divisor
-        if( i % divisor == 0):
-            return False;
-        else:
-            # Los multiplos de un numero compuesto deben ser menor a la raiz
-            # cuadrada del numero a evaluar( No hay casos donde sean mayor)
-            if(divisor >= sqrt(i)):
-                return True
-
-    PRIMOS.append(i)
-    return True
-
-def rotar(cadena):
-    """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
-    la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
-    cadena_rotada = ''
-    for i in range(0,len(cadena)):
-        cadena_rotada += cadena[(i+1) % len(cadena)]
-    return cadena_rotada
-
-def esCircular(i):
-    """ Evalua si es primo circular """
-    # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
-    # entonces ya no es circular
-    for j in str(i):
-        if int(j) not in [1,3,7,9]:
-            return False
-
-    # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
-    # se evaluo esa combinacion
-    rotado = i
-    for j in range(0, len(str(i))):
-        # Si alguna rotacion no es prima , no es circular
-        if not esPrimo(rotado):
-            return False
-        rotado = int(rotar( str(rotado) ))
-
-    return True;
-
 
 # Acceso por linea de comandos
 if __name__ == '__main__':
