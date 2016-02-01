@@ -11,6 +11,10 @@ class PrimosCirculares(object):
 
     def esPrimo(self, i):
         """ Evalua si es primo a través de un test de primalidad """
+        if(self.PRIMOS[len(self.PRIMOS)-1] < sqrt(i)):
+            raise Exception()
+            #PROBLEMAAAAAAAAA CUANDO HAY UN UN CIRCULAR, EL CUAL SU ROTADO ES MAYOR QUE EL EVALUADO
+
         for divisor in self.PRIMOS:
             # Si hay un modulo 0 quiere decir que es compuesto porque es divisible
             # por ese divisor
@@ -21,8 +25,6 @@ class PrimosCirculares(object):
                 # cuadrada del numero a evaluar( No hay casos donde sean mayor)
                 if(divisor >= sqrt(i)):
                     return True
-
-        self.PRIMOS.append(i)
         return True
 
     class EvaluarCirculares(threading.Thread):
@@ -119,7 +121,7 @@ class PrimosCirculares(object):
             threads.append(thread2)
 
             for thread in threads:
-                    thread.join()
+                thread.join()
 
         return circulares
     
