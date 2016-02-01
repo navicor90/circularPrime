@@ -9,7 +9,8 @@ from math import sqrt
 class PrimosCirculares(object):
     __circulares = []
 
-    def __rotar(self, cadena):
+    @classmethod
+    def rotar(self, cadena):
         """ Rota una cadena ingresada , desplazando los elementos del arreglo hacia
         la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
         cadena_rotada = ''
@@ -17,7 +18,8 @@ class PrimosCirculares(object):
             cadena_rotada += cadena[(i+1) % len(cadena)]
         return cadena_rotada
 
-    def __esCircular(self, i):
+    @classmethod
+    def esCircular(self, i):
         """ Evalua si es primo circular """
         # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
         # entonces ya no es circular
@@ -32,38 +34,45 @@ class PrimosCirculares(object):
             # Si alguna rotacion no es prima , no es circular
             if not Primos.esPrimo(rotado):
                 return False
-            rotado = int(self.__rotar( str(rotado) ))
+            rotado = int(self.rotar( str(rotado) ))
 
         return True;
 
-    def obtener(self,base=3 ,top=10):
+    def __obtenerCirculares(self,base=1 ,top=10):
         # Estos valores se añaden explicitamente para poder iterar con paso 2
         # cuando estemos buscando los circulares y así hacerlo con mayor
         # eficiencia
-        if top >= 2:
-            self.__circulares.append(2)
-        else:
-            return
+        if base <= 0 or top <= 1:
+            raise Exception('Parametros erroneos, debe ser base > 0 y tope > 1')
 
+        if base < 3:
+            self.__circulares.append(2)
+            base = 3
+
+        if base % 2 == 0:
+            base += 1
+
+        # Le sumamos 1 a top, para evaluar también el numero ingresado por parametros
         for i in range(base, top+1, 2):
             # Si no tenemos suficientes primos para factorizar un numero, se pone a
             # dormir el hilo
             while((Primos.getPrimosCalculados()[len(Primos.getPrimosCalculados())-1] < sqrt(i))):
                 time.sleep(2)
 
-            if self.__esCircular(i):
+            if self.esCircular(i):
                 self.__circulares.append(i)
 
     def buscar(self, top):
         """ Busca todos los numeros primos circulares mayores a 0 y menores que el
         parametro "top" """
 
+        self.__circulares = []
         # Validamos que el valor ingresado, sea entero y positivo
         if int(top) > 0:
             p = Primos(top)
 
             # Creamos hilo para calcular los circulares
-            thread = Thread(target=self.obtener, args=(3,top,))
+            thread = Thread(target=self.__obtenerCirculares, args=(1,top,))
             thread.start()
             thread.join()
 
