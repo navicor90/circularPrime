@@ -23,9 +23,10 @@ class PrimosCirculares(object):
         """ Evalua si es primo circular """
         # Si uno de los caracteres que componen el numero es diferente de 1,3,7,9
         # entonces ya no es circular
-        for j in str(i):
-            if int(j) not in [1,3,7,9]:
-                return False
+        if i > 10:
+            for j in str(i):
+                if int(j) not in [1,3,7,9]:
+                    return False
 
         # Si alguna de las rotaciones esta en la lista de circulares, es porque ya
         # se evaluo esa combinacion
