@@ -9,7 +9,7 @@ def index():
     pcList = []
     msg = ''
     form = SQLFORM.factory(
-            Field('hasta','integer' ,requires=IS_NOT_EMPTY(),default=1000000),
+            Field('hasta','integer' ,requires=[IS_NOT_EMPTY(),IS_INT_IN_RANGE(1, 1000001)],default=1000000),
             _class='form-inline'
             )
 
