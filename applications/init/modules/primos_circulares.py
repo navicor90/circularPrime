@@ -4,7 +4,7 @@
 from threading import Thread
 import time
 import sys
-from math import sqrt
+from math import sqrt,floor
 
 class PrimosCirculares(object):
     __circulares = []
@@ -15,7 +15,7 @@ class PrimosCirculares(object):
         la izquierda y colocando el primero al final. Devuelve la cadena rotada"""
         cadena_rotada = ''
         for i in range(0,len(cadena)):
-            cadena_rotada += cadena[(i+1) % len(cadena)]
+            cadena_rotada += cadena[i-1]
         return cadena_rotada
 
     @classmethod
@@ -59,7 +59,7 @@ class PrimosCirculares(object):
         for i in range(base, top+1, 2):
             # Si no tenemos suficientes primos para factorizar un numero, se pone a
             # dormir el hilo
-            while((Primos.getPrimosCalculados()[len(Primos.getPrimosCalculados())-1] < sqrt(i))):
+            while((Primos.getPrimosCalculados()[-1] < sqrt(i))):
                 time.sleep(2)
 
             if self.esCircular(i):
@@ -75,7 +75,7 @@ class PrimosCirculares(object):
         if int(top) > 0:
             p = Primos(top)
 
-            top1 = int(0.6*top)
+            top1 = int(floor(0.6*top))
             # Creamos hilo para calcular los circulares
             thread1 = Thread(target=self.__obtenerCirculares, args=(1,top1,))
             thread1.start()
@@ -106,7 +106,7 @@ class Primos(object):
     @classmethod
     def esPrimo(self,n):
         """ Utilizando la lista "primos" evalua si un numero dado "i" es primo """
-        if(self.PRIMOS[len(self.PRIMOS) -1] < sqrt(n)):
+        if(self.PRIMOS[-1] < sqrt(n)):
             if self.calculador.is_alive():
                 self.calculador.join()
             else:
@@ -133,7 +133,7 @@ class Primos(object):
     def preCalcular(self, top):
         """ Recorre en paso 2 (para evaluar numeros impares) desde el ultimo primo 
         calculado hasta el valor de "top" calculando primos y guardandolos"""
-        for i in range(self.PRIMOS[len(self.PRIMOS)-1], int(top), 2):
+        for i in range(self.PRIMOS[-1], int(top), 2):
             if self.esPrimo(i):
                 self.PRIMOS.append(i)
 
