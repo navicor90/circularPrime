@@ -1,24 +1,23 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
+
 <div class="page-header">
     <h1>Números primos circulares</h1>
 </div>
 
-<h4>Indique el número máximo a evaluar(No puede ser mayor a 1 millón).</h4>
+<h4>Indique el número a evaluar si es circular(No puede ser mayor a 1 millón).</h4>
 {{=form}}
 
 </br>
-{{if pc:}}
+{{if msg:}}
 <div class="panel panel-default">
     <div class="panel-body">
     <h3>
       <p>
-        <b>Primos Circulares obtenidos:</b>
-        {{=pc}}
+        <b>
+          {{=msg}}
+        </b>
       </p>
-      <small>
-        {{=msg}}
-      </small>
     </h3>
     </div>
 </div>
