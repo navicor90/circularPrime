@@ -95,11 +95,12 @@ class PrimosCirculares(object):
     
 class Primos(object):
     PRIMOS = [2,3]
+    instancia = None
     calculador = Thread()
 
     def __init__ (self, top=2):
         self.top = top
-        self.calculador = Thread(target=self.__preCalcular, args=(self.top,))
+        self.calculador = Thread(target=self.preCalcular, args=(self.top,))
         self.calculador.start()
 
     @classmethod
@@ -109,8 +110,7 @@ class Primos(object):
             if self.calculador.is_alive():
                 self.calculador.join()
             else:
-                self.top = n
-                self.calculador = Thread(target=self.__preCalcular, args=(self.top,))
+                self.calculador = Thread(target=self.preCalcular, args=(n,))
                 self.calculador.start()
                 self.calculador.join()
                 return self.esPrimo(n)
@@ -129,7 +129,8 @@ class Primos(object):
         raise Exception()
 
 
-    def __preCalcular(self, top):
+    @classmethod
+    def preCalcular(self, top):
         """ Recorre en paso 2 (para evaluar numeros impares) desde el ultimo primo 
         calculado hasta el valor de "top" calculando primos y guardandolos"""
         for i in range(self.PRIMOS[len(self.PRIMOS)-1], int(top), 2):

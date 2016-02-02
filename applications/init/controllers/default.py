@@ -30,6 +30,28 @@ def index():
 
     return dict(form = form,pc = pcList,msg= msg)
 
+def esCircular():
+    msg = ''
+    form = SQLFORM.factory(
+            Field('numero','integer' ,requires=[IS_NOT_EMPTY(),IS_INT_IN_RANGE(1, 1000001)]),
+            _class='form-inline'
+            )
+
+    if form.process().accepted:
+        numero = int(form.vars.numero)
+        pc = PrimosCirculares().esCircular(numero)
+        response.flash = ''
+        if pc:
+            msg = 'El numero %s ES circular' %(numero)
+        else:
+            msg = 'El numero %s NO es circular' %(numero)
+
+    elif form.errors:
+        response.flash = 'Formulario erroneo'
+
+    return dict(form = form,msg= msg)
+
+
 
 def user():
     """
